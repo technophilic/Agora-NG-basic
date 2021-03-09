@@ -1,4 +1,4 @@
-# Add Video Calling in your Web App using [Agora.io](http://Agora.io) 🖥
+# Add Video Calling in your Web App using Agora Web NG SDK 🖥
 
   
 
@@ -8,9 +8,9 @@
 
 Integrating video streaming features within your application can be very tedious and time-consuming. Maintaining a low-latency video server, load balancing, listening to end-user events (screen off, reload, etc.) are some of the really painful hassles… not to mention having cross-platform compatibility.
 
-Feeling dizzy already? Dread not! Agora’s Video SDK allows you to embed video calling features into your application, within a matter of minutes. In addition, all the video server details are abstracted away.
+Feeling dizzy already? Dread not! Agora’s Video SDK allows you to embed video calling features into your application within a matter of minutes. In addition, all the video server details are abstracted away.
 
-In this tutorial, we’ll write a bare-bones web application with video calling features using vanilla JavaScript and the Agora Web NG SDK.
+In this tutorial, we'll create a bare-bones web application with video calling features using vanilla JavaScript and the Agora Web NG SDK.
 
   
 
@@ -22,15 +22,15 @@ You can test a live demo of this tutorial [here](https://agora-ng-sdk-demo.netli
 
 Go ahead to [https://sso.agora.io/en/v2/signup](https://sso.agora.io/en/v2/signup) to create an account and login into the dashboard.
 
-Navigate to the project list tab under projects and create a new project by clicking the green button as shown in the below image.
-
-  
+You can follow this guide for reference https://www.agora.io/en/blog/how-to-get-started-with-agora.
 
 Create a new project and retrieve the App ID. This will be to authenticate your requests while coding the application.
 
+If you have enabled the app certificate, also retrieve the temporary token.
+
 ## Structure
 
-This would be the structure of the application that we are developing
+This would be the structure of the application that we are developing.
 
 ```plain
 .
@@ -90,6 +90,8 @@ There is a container with an id `me` that is supposed to contain the video strea
 
 There is a container with an id `remote-container` to render the video feeds of the other remote users in the channel.
 
+You can either download the latest version of the Web SDK from Agora's [Downloads page](https://www.agora.io/en/download/) or use the CDN version instead, as shown in the code snippet.
+
 ## Styling
 Now, let’s add some basic styling to our app.
 
@@ -136,7 +138,7 @@ let remoteContainer= document.getElementById("remote-container");
 /**
  * @name addVideoContainer
  * @param uid - uid of the user
- * @description Helper function to add the video stream to "remote-container"
+ * @description Helper function to add the video stream to "remote-container".
  */
 function addVideoContainer(uid){
     let streamDiv=document.createElement("div"); // Create a new div for every stream
@@ -147,7 +149,7 @@ function addVideoContainer(uid){
 /**
  * @name removeVideoContainer
  * @param uid - uid of the user
- * @description Helper function to remove the video stream from "remote-container"
+ * @description Helper function to remove the video stream from "remote-container".
  */
 function removeVideoContainer (uid) {
     let remDiv=document.getElementById(uid);
@@ -163,7 +165,7 @@ function removeVideoContainer (uid) {
 
 So what’s the diagram all about? Let’s break it down a bit.
 
-Channels are something similar to chat rooms and every App ID can spawn multiple channels.
+Channels are something similar to chat rooms, and every App ID can spawn multiple channels.
 
 Users are able to join and leave a channel at will.
 
@@ -178,15 +180,15 @@ First, we need to create a client object by calling the `AgoraRTC.createClient` 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 ```
 
-### Creating local media tracks and intializing
+### Creating local media tracks and initializing
 
-Let's create audio and video track objects for the local user by calling the `AgoraRTC.createMicrophoneAndCameraTracks` method .(Although optional, You can also pass in the appropriate parameters as per docs to tweak your tracks).
+Let's create audio and video track objects for the local user by calling the `AgoraRTC.createMicrophoneAndCameraTracks` method. (Although optional, You can also pass in the appropriate parameters as per docs to tweak your tracks).
 
 ```js
 const [localAudioTrack, localVideoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks();
 ```
 
-We can now initialize the stop button and play the local video feed back in the browser ('me' container) to provide feedback.
+We can now initialize the stop button and play the local video feedback in the browser ('me' container) to provide feedback.
 
 ```js
 // Initialize the stop button
@@ -224,7 +226,7 @@ function initStop(client, localAudioTrack, localVideoTrack){
 ### Adding event listeners
 
 
-To display the remote users in the channel, and to handle the view appropriately if somebody enters/exits the video call, we'll set up event listeners and handlers.
+To display the remote users in the channel and to handle the view appropriately if somebody enters/exits the video call, we'll set up event listeners and handlers.
 
 ```js
 // Set up event listeners for remote users publishing or unpublishing tracks
@@ -252,16 +254,16 @@ Now we’re ready to join a channel by using the `client.join` method.
 ```js
 const _uid = await client.join(appId, channelId, token, null); 
 ```
-If you have app certificate enabled in your project, you have to generate a temporary token and pass it into the HTML form. If the app certificate is disabled, you can leave the token field blank.
+If you have the app certificate enabled in your project, you have to generate a temporary token and pass it into the HTML form. If the app certificate is disabled, you can leave the token field blank.
 
-For production environments read the below note:
-> Note: This guide does not implement token authentication which is recommended for all RTE apps running in production environments. For more information about token based authentication within the Agora platform please refer to this guide: [https://bit.ly/3sNiFRs](https://bit.ly/3sNiFRs)
+For production environments, read the below note:
+> Note: This guide does not implement token authentication, which is recommended for all RTE apps running in production environments. For more information about token-based authentication within the Agora platform, please refer to this guide: [https://bit.ly/3sNiFRs](https://bit.ly/3sNiFRs)
 
-We will allow Agora to dynamically assign a user ID for each user that joins in this demo so pass in `null` for the UID parameter.
+We will allow Agora to dynamically assign a user ID for each user that joins in this demo, so pass in `null` for the UID parameter.
 
 ### Publishing local tracks into the channel
 
-Finally, it’s time to publish our video feed into the channel.
+Finally, it’s time to publish our video feed on the channel.
 
 ```js
 await client.publish([localAudioTrack, localVideoTrack]);
